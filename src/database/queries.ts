@@ -6,9 +6,9 @@ import {
 } from "../utils/typings/Database.js";
 import db from "./index.js";
 
-// export const getGuildSettings = db.prepare<guildSettingsQuery, GuildSettings>(
-//   "SELECT * FROM guildSettings WHERE guildId = $guildId"
-// );
+export const getGuildSettings = db.prepare<guildSettingsQuery, GuildSettings>(
+  "SELECT * FROM guildSettings WHERE guildId = $guildId"
+);
 
 export const getGuildMemberBilling = db.prepare<
   guildMemberBillingQuery,
@@ -26,10 +26,10 @@ export const upsertGuildMemberBilling = db.prepare<GuildMemberBilling>(
      unpaidRoleId = excluded.unpaidRoleId`
 );
 
-// export const upsertGuildSettings = db.prepare<GuildSettings>(
-//   `INSERT INTO guildSettings (guildId, unpaidRoleId)
-//    VALUES ($guildId, $unpaidRoleId)
-//    ON CONFLICT(guildId)
-//    DO UPDATE SET
-//      unpaidRoleId = excluded.unpaidRoleId`
-// );
+export const upsertGuildSettings = db.prepare<GuildSettings>(
+  `INSERT INTO guildSettings (guildId, oxaMerchantApiKey)
+   VALUES ($guildId, $oxaMerchantApiKey)
+   ON CONFLICT(guildId)
+   DO UPDATE SET
+     oxaMerchantApiKey = excluded.oxaMerchantApiKey`
+);

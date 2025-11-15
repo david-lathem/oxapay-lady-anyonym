@@ -5,8 +5,10 @@ import { OxaInvoiceStatusResponseData } from "../utils/typings/OxapayTypes.js";
 import { generateOxaInvoiceStatusEmbed } from "../utils/oxaEmbed.js";
 import client from "../client.js";
 import { sendLogInChannel } from "../utils/logs.js";
-import { customRequest } from "../utils/typings/types.js";
-import { getGuildMemberBilling } from "../database/queries.js";
+import {
+  getGuildMemberBilling,
+  getGuildSettings,
+} from "../database/queries.js";
 import { TextChannel } from "discord.js";
 
 const app = express();
@@ -17,7 +19,7 @@ if (NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(
   express.json({
-    verify: (req: customRequest, res, buf) => {
+    verify: (req: Request, res, buf) => {
       req.rawBody = buf;
     },
   })
@@ -35,18 +37,33 @@ async function handleOxaPaySigning(
   res: Response,
   next: NextFunction
 ) {
-  let apiKey: string = process.env.OXAPAY_MERCHANT_API_KEY;
+  if (req.body.type !== "invoice" && req.body.status !== "Paid") return;
+
+  const [channelId] = req.body.order_id.split("-");
+
+  const channel = client.channels.cache.get(channelId);
+
+  if (!channel) return console.log("Webhook but channel not found");
+
+  const { guild } = channel as TextChannel;
+
+  if (!guild) return;
+
+  const settings = getGuildSettings.get({ guildId: guild.id });
+
+  if (!settings) return console.log(`Webhook but no api key`);
 
   const requestHMAC = req.headers["hmac"];
-  const ourHMAC = crypto.createHmac("sha512", apiKey);
+  const ourHMAC = crypto.createHmac("sha512", settings.oxaMerchantApiKey);
 
-  ourHMAC.update((req as customRequest).rawBody);
+  ourHMAC.update(req.rawBody!);
 
   const digest = ourHMAC.digest("hex");
 
   if (digest !== requestHMAC)
     return res.status(403).json({ status: "Unauthorized" });
 
+  req.guild = guild;
   next();
 }
 
@@ -55,21 +72,15 @@ async function handleWebhookEvent(
   res: Response
 ) {
   console.log(req.body);
-  if (req.body.type !== "invoice" && req.body.status !== "Paid") return;
+
+  if (!req.guild) return;
 
   const [channelId, userId] = req.body.order_id.split("-");
 
-  const channel = client.channels.cache.get(channelId);
-
-  if (!channel) return console.log("Webhook but channel not found");
-
-  const { guild } = channel as TextChannel;
-  if (!guild) return;
-
-  const member = await guild.members.fetch(userId);
+  const member = await req.guild.members.fetch(userId);
 
   const memberSettings = getGuildMemberBilling.get({
-    guildId: guild.id,
+    guildId: req.guild.id,
     memberId: member.id,
   });
 
@@ -77,7 +88,7 @@ async function handleWebhookEvent(
 
   await member.roles.remove(memberSettings.unpaidRoleId);
 
-  const embed = generateOxaInvoiceStatusEmbed(guild, req.body, true);
+  const embed = generateOxaInvoiceStatusEmbed(req.guild, req.body, true);
 
   await sendLogInChannel({ embeds: [embed] }, channelId);
 

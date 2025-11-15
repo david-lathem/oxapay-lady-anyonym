@@ -10,5 +10,5 @@ export interface GuildMemberBilling {
 
 export interface GuildSettings {
   guildId: string;
-  unpaidRoleId: string;
+  oxaMerchantApiKey: string;
 }

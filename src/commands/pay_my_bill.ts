@@ -1,13 +1,23 @@
 import { extendedAPICommand } from "../utils/typings/types.js";
 import { generateOxaInvoice } from "../utils/oxaAPI.js";
 import { generateOxaInvoiceEmbed } from "../utils/oxaEmbed.js";
-import { getGuildMemberBilling } from "../database/queries.js";
+import {
+  getGuildMemberBilling,
+  getGuildSettings,
+} from "../database/queries.js";
 
 export default {
   name: "pay_my_bill",
   description: "Generate a payment invoice via OxaPay",
 
   execute: async (interaction) => {
+    const guildSettings = getGuildSettings.get({
+      guildId: interaction.guild.id,
+    });
+
+    if (!guildSettings)
+      throw new Error("Please ask admins to link the payment gateway!");
+
     const memberSettings = getGuildMemberBilling.get({
       guildId: interaction.guild.id,
       memberId: interaction.member.id,

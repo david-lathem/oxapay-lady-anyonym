@@ -8,7 +8,6 @@ import {
   Guild,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from "discord.js";
-import { Request } from "express";
 
 export interface extendedAPICommand
   extends RESTPostAPIChatInputApplicationCommandsJSONBody {
@@ -22,9 +21,11 @@ export interface extendedAPICommand
   ): Promise<EmbedBuilder>;
 }
 
-export interface customRequest extends Request {
-  rawBody: Buffer;
-}
+// export interface customRequest extends Request {
+//   rawBody: Buffer;
+//   guild: Guild;
+//   channel: TextChannel;
+// }
 
 export interface BaseCustomFetchOptions {
   url: string;

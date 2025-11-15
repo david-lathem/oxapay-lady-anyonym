@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS guildMemberBilling (
 );
 `);
 
-// db.exec(`
-// CREATE TABLE IF NOT EXISTS guildSettings (
-//     guildId TEXT NOT NULL UNIQUE,
-//     unpaidRoleId TEXT NOT NULL
-// );
-// `);
+db.exec(`
+CREATE TABLE IF NOT EXISTS guildSettings (
+    guildId TEXT NOT NULL UNIQUE,
+    oxaMerchantApiKey TEXT NOT NULL
+);
+`);
