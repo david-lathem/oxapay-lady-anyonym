@@ -11,13 +11,6 @@ export default {
   description: "Generate a payment invoice via OxaPay",
 
   execute: async (interaction) => {
-    const guildSettings = getGuildSettings.get({
-      guildId: interaction.guild.id,
-    });
-
-    if (!guildSettings)
-      throw new Error("Please ask admins to setup the server settings!");
-
     const memberSettings = getGuildMemberBilling.get({
       guildId: interaction.guild.id,
       memberId: interaction.member.id,

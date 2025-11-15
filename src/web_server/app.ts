@@ -6,7 +6,10 @@ import { generateOxaInvoiceStatusEmbed } from "../utils/oxaEmbed.js";
 import client from "../client.js";
 import { sendLogInChannel } from "../utils/logs.js";
 import { customRequest } from "../utils/typings/types.js";
-import { getGuildSettings } from "../database/queries.js";
+import {
+  getGuildMemberBilling,
+  getGuildSettings,
+} from "../database/queries.js";
 import { TextChannel } from "discord.js";
 
 const app = express();
@@ -68,11 +71,14 @@ async function handleWebhookEvent(
 
   const member = await guild.members.fetch(userId);
 
-  const guildSettings = getGuildSettings.get({ guildId: guild.id });
+  const memberSettings = getGuildMemberBilling.get({
+    guildId: guild.id,
+    memberId: member.id,
+  });
 
-  if (!guildSettings) return console.log(`Webhook but no settibgs found`);
+  if (!memberSettings) return console.log(`Webhook but no settibgs found`);
 
-  await member.roles.remove(guildSettings.unpaidRoleId);
+  await member.roles.remove(memberSettings.unpaidRoleId);
 
   const embed = generateOxaInvoiceStatusEmbed(guild, req.body, true);
 

@@ -22,15 +22,23 @@ export default {
       type: ApplicationCommandOptionType.User,
       required: true,
     },
+    {
+      name: "unpaid_role",
+      description: "Unpaid role",
+      type: ApplicationCommandOptionType.Role,
+      required: true,
+    },
   ],
   execute: async (interaction) => {
     const billAmount = interaction.options.getNumber("bill_amount", true);
     const member = interaction.options.getUser("member", true);
+    const unpaidRole = interaction.options.getRole("unpaid_role", true);
 
     upsertGuildMemberBilling.run({
       guildId: interaction.guildId,
       billAmount,
       memberId: member.id,
+      unpaidRoleId: unpaidRole.id,
     });
 
     return generateGuildSettingsEmbed();
