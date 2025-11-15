@@ -20,7 +20,7 @@ export default {
       amount: memberSettings.billAmount,
       order_id: `${interaction.channel?.id}-${interaction.user.id}`,
 
-      currency: "GPB",
+      currency: "GBP",
       sandbox: process.env.NODE_ENV === "development",
     };
 
