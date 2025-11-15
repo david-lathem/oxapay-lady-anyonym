@@ -34,7 +34,10 @@ export default {
       sandbox: process.env.NODE_ENV === "development",
     };
 
-    const res = await generateOxaInvoice(payload);
+    const res = await generateOxaInvoice(
+      guildSettings.oxaMerchantApiKey,
+      payload
+    );
 
     const embed = generateOxaInvoiceEmbed(interaction.guild, res);
 

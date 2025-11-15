@@ -36,6 +36,7 @@ export interface BaseCustomFetchOptions {
 
 export interface OxaPayFetchOptions extends BaseCustomFetchOptions {
   oxapay: true;
+  merchantApiKey: string;
   apiKeyType: "General" | "Merchant" | "Payout";
 }
 
