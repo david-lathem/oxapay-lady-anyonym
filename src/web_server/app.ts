@@ -68,12 +68,19 @@ async function handleWebhookEvent(
 
   const member = await guild.members.fetch(userId);
 
-  const guildSettings = getGuildSettings.get({ guildId: guild.id });
+  const guildSettings = getGuildSettings.all({ guildId: guild.id });
 
-  if (!guildSettings || !guildSettings.unpaidRoleId)
+  if (!guildSettings.length)
     return console.log(`Webhook but no settibgs found`);
 
-  await member.roles.remove(guildSettings.unpaidRoleId);
+  const settings = guildSettings.find((s) =>
+    member.roles.cache.has(s.unpaidRoleId)
+  );
+
+  if (!settings)
+    return console.log(`Webhook but no settibgs found for exact user`);
+
+  await member.roles.remove(settings.unpaidRoleId);
 
   const embed = generateOxaInvoiceStatusEmbed(guild, req.body, true);
 

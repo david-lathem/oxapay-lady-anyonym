@@ -10,7 +10,7 @@ export default {
   execute: async (interaction) => {
     const settings = getGuildSettings.get({ guildId: interaction.guildId });
 
-    if (!settings || !settings.billAmount || !settings.unpaidRoleId)
+    if (!settings)
       throw new Error("Please ask admins to setup the payment details!");
 
     const payload = {

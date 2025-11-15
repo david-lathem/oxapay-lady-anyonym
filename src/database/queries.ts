@@ -15,8 +15,7 @@ export const getGuildSettings = db.prepare<guildSettingsQuery, GuildSettings>(
 export const upsertGuildSettings = db.prepare<guildSettingsUpdate>(
   `INSERT INTO guildSettings (guildId, billAmount, unpaidRoleId)
    VALUES ($guildId, $billAmount, $unpaidRoleId)
-   ON CONFLICT(guildId)
+   ON CONFLICT(guildId, unpaidRoleId)
    DO UPDATE SET
-     unpaidRoleId = $unpaidRoleId,
-     billAmount = $billAmount`
+     billAmount = excluded.billAmount`
 );
