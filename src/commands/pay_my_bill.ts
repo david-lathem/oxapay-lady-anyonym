@@ -1,10 +1,7 @@
 import { extendedAPICommand } from "../utils/typings/types.js";
 import { generateOxaInvoice } from "../utils/oxaAPI.js";
 import { generateOxaInvoiceEmbed } from "../utils/oxaEmbed.js";
-import {
-  getGuildMemberBilling,
-  getGuildSettings,
-} from "../database/queries.js";
+import { getGuildMemberBilling } from "../database/queries.js";
 
 export default {
   name: "pay_my_bill",

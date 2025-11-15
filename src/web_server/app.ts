@@ -6,10 +6,7 @@ import { generateOxaInvoiceStatusEmbed } from "../utils/oxaEmbed.js";
 import client from "../client.js";
 import { sendLogInChannel } from "../utils/logs.js";
 import { customRequest } from "../utils/typings/types.js";
-import {
-  getGuildMemberBilling,
-  getGuildSettings,
-} from "../database/queries.js";
+import { getGuildMemberBilling } from "../database/queries.js";
 import { TextChannel } from "discord.js";
 
 const app = express();
