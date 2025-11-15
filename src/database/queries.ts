@@ -1,21 +1,34 @@
 import {
+  GuildMemberBilling,
+  guildMemberBillingQuery,
   GuildSettings,
   guildSettingsQuery,
-  guildSettingsUpdate,
 } from "../utils/typings/Database.js";
 import db from "./index.js";
 
-// [GUILD SETTINGS QUERIES]
-
-// 1: Get guild settings
 export const getGuildSettings = db.prepare<guildSettingsQuery, GuildSettings>(
   "SELECT * FROM guildSettings WHERE guildId = $guildId"
 );
 
-export const upsertGuildSettings = db.prepare<guildSettingsUpdate>(
-  `INSERT INTO guildSettings (guildId, billAmount, unpaidRoleId)
-   VALUES ($guildId, $billAmount, $unpaidRoleId)
-   ON CONFLICT(guildId, unpaidRoleId)
+export const getGuildMemberBilling = db.prepare<
+  guildMemberBillingQuery,
+  GuildMemberBilling
+>(
+  "SELECT * FROM guildMemberBilling WHERE guildId = $guildId AND memberId =  $memberId"
+);
+
+export const upsertGuildMemberBilling = db.prepare<GuildMemberBilling>(
+  `INSERT INTO guildMemberBilling (guildId, billAmount, memberId)
+   VALUES ($guildId, $billAmount, $memberId)
+   ON CONFLICT(guildId, memberId)
    DO UPDATE SET
      billAmount = excluded.billAmount`
+);
+
+export const upsertGuildSettings = db.prepare<GuildSettings>(
+  `INSERT INTO guildSettings (guildId, unpaidRoleId)
+   VALUES ($guildId, $unpaidRoleId)
+   ON CONFLICT(guildId)
+   DO UPDATE SET
+     unpaidRoleId = excluded.unpaidRoleId`
 );
