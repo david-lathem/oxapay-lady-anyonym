@@ -3,9 +3,8 @@ import { fetchOxaInvoiceStatus } from "../utils/oxaAPI.js";
 import { generateOxaInvoiceStatusEmbed } from "../utils/oxaEmbed.js";
 
 export default {
-  name: "oxa_invoice_status",
+  name: "invoice_status",
   description: "Check the status of a payment invoice",
-  authorizedRoleOnly: true,
 
   options: [
     {

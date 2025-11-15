@@ -2,11 +2,6 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       TOKEN: string;
-      BOT_OWNER_IDS: string;
-      AUTHORIZED_ROLE_IDS: string;
-      GUILD_ID: string;
-      LOGS_CHANNEL_ID: string;
-      PAYOUT_LOGS_CHANNEL_ID: string;
 
       // HTTP SERVER
       PORT: string;
@@ -14,8 +9,6 @@ declare global {
 
       // OXA_PAY
       OXAPAY_API_BASE_URL: string;
-      OXAPAY_GENERAL_API_KEY: string;
-      OXAPAY_PAYOUT_API_KEY: string;
       OXAPAY_MERCHANT_API_KEY: string;
     }
   }

@@ -1,17 +1,13 @@
 import crypto from "node:crypto";
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
-import {
-  OxaInvoiceStatusResponseData,
-  OxaPayoutStatsData,
-} from "../utils/typings/OxapayTypes.js";
-import {
-  generateOxaInvoiceStatusEmbed,
-  generateOxaPayoutStatsEmbed,
-} from "../utils/oxaEmbed.js";
+import { OxaInvoiceStatusResponseData } from "../utils/typings/OxapayTypes.js";
+import { generateOxaInvoiceStatusEmbed } from "../utils/oxaEmbed.js";
 import client from "../client.js";
 import { sendLogInChannel } from "../utils/logs.js";
 import { customRequest } from "../utils/typings/types.js";
+import { getGuildSettings } from "../database/queries.js";
+import { TextChannel } from "discord.js";
 
 const app = express();
 
@@ -35,13 +31,11 @@ app.use((req: Request, res: Response) => {
 });
 
 async function handleOxaPaySigning(
-  req: Request<{}, {}, OxaInvoiceStatusResponseData | OxaPayoutStatsData>,
+  req: Request<{}, {}, OxaInvoiceStatusResponseData>,
   res: Response,
   next: NextFunction
 ) {
   let apiKey: string = process.env.OXAPAY_MERCHANT_API_KEY;
-
-  if (req.body.type === "payout") apiKey = process.env.OXAPAY_PAYOUT_API_KEY;
 
   const requestHMAC = req.headers["hmac"];
   const ourHMAC = crypto.createHmac("sha512", apiKey);
@@ -57,32 +51,33 @@ async function handleOxaPaySigning(
 }
 
 async function handleWebhookEvent(
-  req: Request<{}, {}, OxaInvoiceStatusResponseData | OxaPayoutStatsData>,
+  req: Request<{}, {}, OxaInvoiceStatusResponseData>,
   res: Response
 ) {
   console.log(req.body);
-  if (req.body.type === "invoice" && req.body.status === "Paid") {
-    const guild = client.guilds.cache.get(process.env.GUILD_ID)!;
+  if (req.body.type !== "invoice" && req.body.status !== "Paid") return;
 
-    const embed = generateOxaInvoiceStatusEmbed(guild, req.body, true);
+  const [channelId, userId] = req.body.order_id.split("-");
 
-    await sendLogInChannel({ embeds: [embed] }, process.env.LOGS_CHANNEL_ID);
-    await sendLogInChannel(
-      { embeds: [embed] },
-      req.body.order_id.split("-")[0]
-    );
-  }
+  const channel = client.channels.cache.get(channelId);
 
-  if (req.body.type === "payout" && req.body.status === "Confirmed") {
-    const guild = client.guilds.cache.get(process.env.GUILD_ID)!;
+  if (!channel) return console.log("Webhook but channel not found");
 
-    const embed = generateOxaPayoutStatsEmbed(guild, req.body, true);
+  const { guild } = channel as TextChannel;
+  if (!guild) return;
 
-    await sendLogInChannel(
-      { embeds: [embed] },
-      process.env.PAYOUT_LOGS_CHANNEL_ID
-    );
-  }
+  const member = await guild.members.fetch(userId);
+
+  const guildSettings = getGuildSettings.get({ guildId: guild.id });
+
+  if (!guildSettings || !guildSettings.unpaidRoleId)
+    return console.log(`Webhook but no settibgs found`);
+
+  await member.roles.remove(guildSettings.unpaidRoleId);
+
+  const embed = generateOxaInvoiceStatusEmbed(guild, req.body, true);
+
+  await sendLogInChannel({ embeds: [embed] }, channelId);
 
   res.send("Success");
 }

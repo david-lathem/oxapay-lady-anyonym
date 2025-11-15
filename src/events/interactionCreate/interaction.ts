@@ -10,7 +10,7 @@ export default async (interaction: BaseInteraction) => {
 
       if (!command?.execute) throw new Error("Command is not setup yet!");
 
-      if (command.guildOnly && !interaction.inGuild())
+      if (!interaction.inCachedGuild())
         throw new Error("Command must be ran inside server only!");
 
       // Check for permissions if set any
@@ -31,20 +31,6 @@ export default async (interaction: BaseInteraction) => {
             throw new Error("You do not have enough perms to run the command!");
         }
       }
-
-      if (
-        !command.authorizedRoleOnly &&
-        !process.env.BOT_OWNER_IDS.split(",").includes(interaction.user.id)
-      )
-        throw new Error("Unauthorized!");
-
-      if (
-        command.authorizedRoleOnly &&
-        !process.env.AUTHORIZED_ROLE_IDS.split(",").some((r) =>
-          interaction.member.roles.cache.has(r)
-        )
-      )
-        throw new Error("Owner only!");
 
       await interaction.deferReply();
       const embed = await command.execute(interaction);

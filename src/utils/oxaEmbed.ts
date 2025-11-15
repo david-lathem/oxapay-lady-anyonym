@@ -113,8 +113,6 @@ export function generateOxaInvoiceStatusEmbed(
   d: OxaInvoiceStatusResponseData,
   isWebhook?: Boolean
 ) {
-  const tx = d.txs[0]; // Assuming only 1 tx for now
-
   const fields = [
     { name: "Track ID", value: `\`${d.track_id}\`` },
     { name: "Status", value: `\`${d.status.toUpperCase()}\`` },
@@ -126,8 +124,8 @@ export function generateOxaInvoiceStatusEmbed(
       inline: true,
     },
 
-    { name: "Email", value: d.email || "`N/A`", inline: true },
-    { name: "Description", value: d.description || "`N/A`" },
+    // { name: "Email", value: d.email || "`N/A`", inline: true },
+    // { name: "Description", value: d.description || "`N/A`" },
   ];
 
   if (d.mixed_payment !== undefined)
@@ -153,18 +151,6 @@ export function generateOxaInvoiceStatusEmbed(
       name: "Expires",
       value: `<t:${Math.floor(d.expired_at)}:f>`,
       inline: true,
-    });
-
-  if (tx)
-    fields.push({
-      name: "Transaction",
-      value: `\`\`\`A payment of ${tx.amount ?? tx.received_amount} ${
-        tx.currency
-      } on ${
-        tx.network
-      } occurred\`\`\` [View TX »](https://www.blockchain.com/explorer?search=${
-        tx.tx_hash
-      })`,
     });
 
   return buildBaseEmbed({
