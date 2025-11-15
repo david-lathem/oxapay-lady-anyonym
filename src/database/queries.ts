@@ -18,11 +18,12 @@ export const getGuildMemberBilling = db.prepare<
 );
 
 export const upsertGuildMemberBilling = db.prepare<GuildMemberBilling>(
-  `INSERT INTO guildMemberBilling (guildId, billAmount, memberId)
-   VALUES ($guildId, $billAmount, $memberId)
+  `INSERT INTO guildMemberBilling (guildId, billAmount, memberId, unpaidRoleId)
+   VALUES ($guildId, $billAmount, $memberId, $unpaidRoleId)
    ON CONFLICT(guildId, memberId)
    DO UPDATE SET
-     billAmount = excluded.billAmount`
+     billAmount = excluded.billAmount,
+     unpaidRoleId = excluded.unpaidRoleId`
 );
 
 // export const upsertGuildSettings = db.prepare<GuildSettings>(

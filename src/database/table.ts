@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS guildMemberBilling (
     guildId TEXT NOT NULL,
     memberId TEXT NOT NULL,
     billAmount REAL NOT NULL,
+    unpaidRoleId TEXT NOT NULL,
     UNIQUE (guildId, memberId)
 );
 `);
