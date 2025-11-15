@@ -6,7 +6,7 @@ import { generateGuildSettingsEmbed } from "../utils/embeds.js";
 export default {
   name: "set_settings",
   description: "Set Settings",
-  // permissionRequired: PermissionFlagsBits.Administrator,
+  permissionRequired: PermissionFlagsBits.Administrator,
 
   options: [
     {
