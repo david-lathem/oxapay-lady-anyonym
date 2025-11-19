@@ -17,7 +17,7 @@ const customFetch = async <T>(options: OxaPayFetchOptions): Promise<T> => {
   //   authorizationHeader["payout_api_key"] = process.env.OXAPAY_PAYOUT_API_KEY;
 
   // if (options.apiKeyType === "Merchant")
-  authorizationHeader["merchant_api_key"] = process.env.OXAPAY_MERCHANT_API_KEY;
+  authorizationHeader["merchant_api_key"] = options.merchantApiKey;
 
   fetchOptions.headers = { ...fetchOptions.headers, ...authorizationHeader };
 

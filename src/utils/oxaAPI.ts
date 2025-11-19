@@ -51,7 +51,6 @@ export const fetchOxaInvoiceStatus = async (
 
 export const generateOxaInvoice = async (
   merchantApiKey: string,
-
   payload: OxaGenerateInvoicePayload
 ): Promise<OxaGenerateInvoiceResponse> =>
   customFetch<OxaGenerateInvoiceResponse>({
