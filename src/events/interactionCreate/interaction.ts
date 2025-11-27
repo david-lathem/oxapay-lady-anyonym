@@ -42,7 +42,7 @@ export default async (interaction: BaseInteraction) => {
       // if (embedChannel?.isSendable()) {
       // await embedChannel.send({ embeds: [embed] });
 
-      await interaction.editReply({ embeds: [embed] });
+      if (embed) await interaction.editReply({ embeds: [embed] });
       // }
     }
 

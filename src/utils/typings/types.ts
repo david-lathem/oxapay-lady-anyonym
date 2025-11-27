@@ -18,7 +18,7 @@ export interface extendedAPICommand
   ): Promise<Array<ApplicationCommandOptionChoiceData | string>>;
   execute(
     interaction: ChatInputCommandInteraction<"cached">
-  ): Promise<EmbedBuilder>;
+  ): Promise<EmbedBuilder | void>;
 }
 
 // export interface customRequest extends Request {

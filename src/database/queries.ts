@@ -17,6 +17,11 @@ export const getGuildMemberBilling = db.prepare<
   "SELECT * FROM guildMemberBilling WHERE guildId = $guildId AND memberId =  $memberId"
 );
 
+export const getAllGuildBilling = db.prepare<
+  guildSettingsQuery,
+  GuildMemberBilling
+>("SELECT * FROM guildMemberBilling WHERE guildId = $guildId");
+
 export const upsertGuildMemberBilling = db.prepare<GuildMemberBilling>(
   `INSERT INTO guildMemberBilling (guildId, billAmount, memberId, unpaidRoleId)
    VALUES ($guildId, $billAmount, $memberId, $unpaidRoleId)

@@ -10,6 +10,10 @@ declare global {
       // OXA_PAY
       OXAPAY_API_BASE_URL: string;
       OXAPAY_MERCHANT_API_KEY: string;
+
+      // Forwarder
+      FORWARD_FROM_CHANNEL_ID: string;
+      FORWARD_TO_CHANNEL_ID: string;
     }
   }
 }
