@@ -8,7 +8,14 @@ export default {
   permissionRequired: PermissionFlagsBits.Administrator,
 
   execute: async (interaction) => {
-    await interaction.guild.members.fetch();
+    if (
+      interaction.guild.memberCount !== interaction.guild.members.cache.size
+    ) {
+      console.log(`Fetching members for ${interaction.guild.name}`);
+
+      await interaction.guild.members.fetch();
+      console.log(`Fetched ${interaction.guild.members.cache.size}`);
+    }
 
     const billings = getAllGuildBilling.all({
       guildId: interaction.guild.id,
