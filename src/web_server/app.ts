@@ -37,7 +37,7 @@ async function handleOxaPaySigning(
   res: Response,
   next: NextFunction
 ) {
-  if (req.body.type !== "invoice" && req.body.status !== "Paid") return;
+  if (req.body.type !== "invoice" || req.body.status !== "Paid") return;
 
   const [channelId] = req.body.order_id.split("-");
 
