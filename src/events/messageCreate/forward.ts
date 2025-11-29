@@ -6,13 +6,17 @@ export default async (message: Message) => {
 
     const { channelId, client, content, attachments, embeds } = message;
 
-    if (channelId !== process.env.FORWARD_FROM_CHANNEL_ID) return;
+    console.log("Message receved");
+
+    if (channelId !== process.env.FORWARD_FROM_CHANNEL_ID)
+      return console.log("Message not in from");
 
     const destChannel = client.channels.cache.get(
       process.env.FORWARD_TO_CHANNEL_ID
     );
 
-    if (!destChannel || !destChannel.isSendable()) return;
+    if (!destChannel || !destChannel.isSendable())
+      return console.log("Message dest not found");
 
     await destChannel.send({
       content,
